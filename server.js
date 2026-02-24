@@ -145,28 +145,76 @@ class Parser {
 }
 
 /* ─────────────────────────────────────────────
-    AST → TREE STRING (pretty print)
+    AST → TREE STRING (pretty print with box chars)
 ─────────────────────────────────────────────── */
-function printTree(node, indent = 0) {
+function printTree(node, prefix = "", isLeft = true, isRoot = true) {
     if (!node) return "";
 
-    const prefix = "  ".repeat(indent);
     let out = "";
+    const connector = isRoot ? "" : (isLeft ? "├── " : "└── ");
+    const childPrefix = isRoot ? "" : (isLeft ? "│   " : "    ");
 
     if (node.type === "BinaryOp") {
-        out += `${prefix}${node.operator}\n`;
-        out += printTree(node.left, indent + 1);
-        out += printTree(node.right, indent + 1);
+        out += `${prefix}${connector}[${node.operator}]\n`;
+        out += printTree(node.left,  prefix + childPrefix, true, false);
+        out += printTree(node.right, prefix + childPrefix, false, false);
     } else if (node.type === "UnaryOp") {
-        out += `${prefix}${node.operator} (unary)\n`;
-        out += printTree(node.operand, indent + 1);
+        out += `${prefix}${connector}[unary ${node.operator}]\n`;
+        out += printTree(node.operand, prefix + childPrefix, false, false);
     } else if (node.type === "Number") {
-        out += `${prefix}${node.value}\n`;
+        out += `${prefix}${connector}${node.value}\n`;
     } else if (node.type === "Variable") {
-        out += `${prefix}${node.name}\n`;
+        out += `${prefix}${connector}${node.name}\n`;
     }
 
     return out;
+}
+
+/* ─────────────────────────────────────────────
+    SEMANTIC ANALYSIS (type check & variable detection)
+─────────────────────────────────────────────── */
+function semanticAnalysis(ast) {
+    const variables = new Set();
+    const constants = [];
+    const operators = [];
+    let nodeCount = 0;
+
+    function walk(node) {
+        if (!node) return;
+        nodeCount++;
+
+        if (node.type === "Variable") {
+            variables.add(node.name);
+        } else if (node.type === "Number") {
+            constants.push(node.value);
+        } else if (node.type === "BinaryOp") {
+            operators.push(node.operator);
+            walk(node.left);
+            walk(node.right);
+        } else if (node.type === "UnaryOp") {
+            operators.push(`unary ${node.operator}`);
+            walk(node.operand);
+        }
+    }
+
+    walk(ast);
+
+    let report = "";
+    report += "── Semantic Analysis Report ──\n\n";
+    report += `AST Nodes     : ${nodeCount}\n`;
+    report += `Variables     : ${variables.size > 0 ? [...variables].join(", ") : "(none)"}\n`;
+    report += `Constants     : ${constants.length > 0 ? constants.join(", ") : "(none)"}\n`;
+    report += `Operators     : ${operators.join(", ")}\n`;
+    report += `Result Type   : ${variables.size > 0 ? "symbolic (contains variables)" : "numeric (can evaluate)"}\n`;
+
+    if (variables.size > 0) {
+        report += `\n⚠ Undeclared symbols: ${[...variables].join(", ")}`;
+        report += `\n  (values needed at runtime)`;
+    } else {
+        report += `\n✓ Expression is fully evaluable at compile time`;
+    }
+
+    return report;
 }
 
 /* ─────────────────────────────────────────────
@@ -248,7 +296,7 @@ app.post("/compile", (req, res) => {
         res.json({
             tokens: tokens.map(t => `${t.type.padEnd(8)} ${t.value}`).join("\n"),
             syntaxTree,
-            semantic: JSON.stringify(ast, null, 2),
+            semantic: semanticAnalysis(ast),
             intermediate: tacLines.join("\n"),
             final: finalCode || "(single value - no operations)"
         });
