@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expression Compiler Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Basic Expression Compiler Visualizer</h1>
+
+        <div class="input-section">
+            <label for="expressionInput">Expression:</label>
+            <input type="text" id="expressionInput" 
+                   placeholder="e.g. 3.14 + a * (b - -7) / 2" 
+                   autocomplete="off" spellcheck="false">
+            <button type="button" onclick="compileExpression()">Compile →</button>
+        </div>
+
+        <div id="errorMessage" class="error hidden"></div>
+
+        <div class="phase-container">
+            <div class="phase">
+                <h2>1. Tokens (Lexical)</h2>
+                <pre id="lexicalOutput"></pre>
+            </div>
+
+            <div class="phase">
+                <h2>2. Abstract Syntax Tree (Syntax)</h2>
+                <pre id="syntaxOutput"></pre>
+            </div>
+
+            <div class="phase">
+                <h2>3. Semantic Analysis</h2>
+                <pre id="semanticOutput"></pre>
+            </div>
+
+            <div class="phase">
+                <h2>4. Three-Address Code (Intermediate)</h2>
+                <pre id="intermediateOutput"></pre>
+            </div>
+
+            <div class="phase">
+                <h2>5. Final Code (Pseudo Assembly)</h2>
+                <pre id="finalOutput"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
