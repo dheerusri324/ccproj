@@ -4,49 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expression Compiler Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
     <div class="container">
-        <h1>Basic Expression Compiler Visualizer</h1>
+        <header class="header">
+            <h1>⚡ Expression Compiler <span class="gradient-text">Visualizer</span></h1>
+            <p class="tagline">Watch your expression flow through every compiler phase — in real time</p>
+        </header>
 
         <div class="input-section">
-            <label for="expressionInput">Expression:</label>
-            <input type="text" id="expressionInput" 
-                   placeholder="e.g. 3.14 + a * (b - -7) / 2" 
-                   autocomplete="off" spellcheck="false">
-            <button type="button" onclick="compileExpression()">Compile →</button>
+            <div class="input-wrapper">
+                <span class="input-icon">λ</span>
+                <input type="text" id="expressionInput" 
+                       placeholder="e.g. 3.14 + a * (b - -7) / 2" 
+                       autocomplete="off" spellcheck="false">
+            </div>
+            <button type="button" id="compileBtn" onclick="compileExpression()">
+                <span class="btn-text">Compile</span>
+                <span class="btn-icon">→</span>
+            </button>
         </div>
 
         <div id="errorMessage" class="error hidden"></div>
 
         <div class="phase-container">
-            <div class="phase">
-                <h2>1. Tokens (Lexical)</h2>
+            <div class="phase phase-1" data-phase="1">
+                <div class="phase-header">
+                    <span class="phase-badge">01</span>
+                    <h2>Tokens <span class="phase-label">Lexical Analysis</span></h2>
+                </div>
                 <pre id="lexicalOutput"></pre>
             </div>
 
-            <div class="phase">
-                <h2>2. Abstract Syntax Tree (Syntax)</h2>
+            <div class="phase phase-2" data-phase="2">
+                <div class="phase-header">
+                    <span class="phase-badge">02</span>
+                    <h2>Syntax Tree <span class="phase-label">Parsing</span></h2>
+                </div>
                 <pre id="syntaxOutput"></pre>
             </div>
 
-            <div class="phase">
-                <h2>3. Semantic Analysis</h2>
+            <div class="phase phase-3" data-phase="3">
+                <div class="phase-header">
+                    <span class="phase-badge">03</span>
+                    <h2>Semantic <span class="phase-label">AST Analysis</span></h2>
+                </div>
                 <pre id="semanticOutput"></pre>
             </div>
 
-            <div class="phase">
-                <h2>4. Three-Address Code (Intermediate)</h2>
+            <div class="phase phase-4" data-phase="4">
+                <div class="phase-header">
+                    <span class="phase-badge">04</span>
+                    <h2>Intermediate <span class="phase-label">Three-Address Code</span></h2>
+                </div>
                 <pre id="intermediateOutput"></pre>
             </div>
 
-            <div class="phase">
-                <h2>5. Final Code (Pseudo Assembly)</h2>
+            <div class="phase phase-5" data-phase="5">
+                <div class="phase-header">
+                    <span class="phase-badge">05</span>
+                    <h2>Final Code <span class="phase-label">Pseudo Assembly</span></h2>
+                </div>
                 <pre id="finalOutput"></pre>
             </div>
         </div>
+
+        <footer class="footer">
+            <p>Compiler Construction Project · Expression Compiler Visualizer</p>
+        </footer>
     </div>
 
     <script src="script.js" defer></script>

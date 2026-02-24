@@ -2,11 +2,11 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-app.use(express.static("public"));
+app.use(express.static(__dirname));
 
 // Optional: redirect root to index.html explicitly
 app.get("/", (req, res) => {
-    res.sendFile("index.html", { root: __dirname + "/public" });
+    res.sendFile("index.html", { root: __dirname});
 });
 app.use(cors());
 app.use(express.json());
